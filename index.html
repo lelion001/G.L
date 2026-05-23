@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G.L — Kreye. Bati. Briye.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#F5C542;--dark:#0A0A0F;--dark2:#13131C;--dark3:#1C1C2A;--accent:#7B5CFA;--accent2:#A084F5;--red:#FF4D6D;--green:#00F5A0;--white:#F0F0FF;--gray:#8888AA;--border:rgba(245,197,66,0.18);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--dark2);}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--dark);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.logo-anim{font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;color:var(--gold);letter-spacing:4px;}
+.bar{width:180px;height:3px;background:var(--dark3);border-radius:2px;margin-top:20px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));width:0;transition:width 1.8s ease;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);letter-spacing:3px;cursor:pointer;}
+.nav-links{display:flex;gap:24px;align-items:center;}
+.nav-links a{color:var(--gray);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s;cursor:pointer;}
+.nav-links a:hover{color:var(--gold);}
+.lang-select{background:transparent;border:1px solid var(--border);color:var(--gold);padding:6px 12px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;outline:none;}
+.lang-select option{background:var(--dark2);color:var(--white);}
+.nav-cta{background:var(--gold);color:var(--dark);padding:8px 22px;border-radius:25px;font-weight:700;font-size:.85rem;cursor:pointer;border:none;font-family:'Syne',sans-serif;transition:transform .2s,box-shadow .2s;}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,197,66,.35);}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:100px 40px 60px;text-align:center;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 20%,rgba(123,92,250,.22) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(245,197,66,.12) 0%,transparent 55%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,197,66,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,197,66,.04) 1px,transparent 1px);background-size:60px 60px;}
+.hero-content{position:relative;z-index:2;max-width:820px;}
+.hero-badge{display:inline-block;background:rgba(123,92,250,.15);border:1px solid rgba(123,92,250,.4);color:var(--accent2);padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:1px;margin-bottom:24px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;margin-bottom:20px;}
+.hero-title .gold{color:var(--gold);}
+.hero-title .acc{color:var(--accent2);}
+.hero-sub{font-size:1.1rem;color:var(--gray);max-width:560px;margin:0 auto 36px;line-height:1.7;}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.btn-gold{background:var(--gold);color:var(--dark);padding:14px 36px;border-radius:30px;font-weight:700;font-family:'Syne',sans-serif;font-size:1rem;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(245,197,66,.4);}
+.btn-outline{background:transparent;color:var(--white);padding:14px 36px;border-radius:30px;font-weight:600;font-size:1rem;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:border-color .2s,color .2s;}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:50px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);}
+.stat-label{font-size:.8rem;color:var(--gray);margin-top:4px;}
+
+/* SECTIONS */
+.section-tag{display:inline-block;background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.3);color:var(--gold);padding:4px 14px;border-radius:14px;font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.1;margin-bottom:14px;}
+.section-sub{color:var(--gray);font-size:1rem;line-height:1.7;max-width:560px;}
+section{padding:90px 40px;}
+.container{max-width:1160px;margin:0 auto;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:2000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.modal-overlay.active{display:flex;}
+.modal{background:var(--dark2);border:1px solid var(--border);border-radius:22px;padding:44px 36px;width:90%;max-width:440px;position:relative;max-height:90vh;overflow-y:auto;}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--gray);font-size:1.4rem;cursor:pointer;}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:6px;}
+.modal .sub{color:var(--gray);font-size:.9rem;margin-bottom:28px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.85rem;color:var(--gray);margin-bottom:7px;}
+.form-group input{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;}
+.form-group input:focus{border-color:var(--gold);}
+.avatar-row{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+.av-item{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;border:3px solid transparent;transition:border-color .2s,transform .2s;flex-shrink:0;}
+.av-item:hover,.av-item.selected{border-color:var(--gold);transform:scale(1.1);}
+.btn-full{width:100%;background:var(--gold);color:var(--dark);padding:13px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;border:none;cursor:pointer;transition:opacity .2s;}
+.btn-full:hover{opacity:.9;}
+
+/* TOOLS */
+#tools{background:var(--dark2);}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px;margin-top:50px;}
+.tool-card{background:var(--dark3);border:1px solid var(--border);border-radius:18px;padding:28px 22px;cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s;position:relative;}
+.tool-card:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(0,0,0,.35);border-color:var(--gold);}
+.tool-icon{font-size:2rem;margin-bottom:14px;}
+.tool-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;}
+.tool-desc{font-size:.83rem;color:var(--gray);line-height:1.5;}
+.tool-badge{position:absolute;top:14px;right:14px;background:var(--green);color:var(--dark);font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:8px;}
+
+/* COMIC */
+#comics{background:var(--dark);}
+.comic-builder{background:var(--dark2);border:1px solid var(--border);border-radius:22px;padding:32px;margin-top:44px;}
+.comic-tabs{display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap;}
+.ctab{background:var(--dark3);border:1px solid var(--border);color:var(--gray);padding:9px 20px;border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.ctab.active{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:700;}
+.comic-panel-area{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.c-panel{background:var(--dark3);border:2px dashed rgba(245,197,66,.2);border-radius:14px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;}
+.c-panel:hover{border-color:var(--gold);background:rgba(245,197,66,.04);}
+.panel-num{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--gray);position:absolute;top:8px;left:10px;}
+.scene-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.scene-item{background:var(--dark3);border:2px solid transparent;border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s;}
+.scene-item:hover,.scene-item.sel{border-color:var(--gold);background:rgba(245,197,66,.07);}
+.si{font-size:1.5rem;}
+.sl{font-size:.72rem;color:var(--gray);margin-top:4px;}
+.voice-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.vbtn{background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:9px 18px;border-radius:20px;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.vbtn:hover,.vbtn.active{border-color:var(--accent2);color:var(--accent2);background:rgba(123,92,250,.1);}
+.comic-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.ca-btn{padding:11px 26px;border-radius:22px;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:all .2s;border:none;}
+.ca-primary{background:var(--gold);color:var(--dark);}
+.ca-primary:hover{box-shadow:0 8px 24px rgba(245,197,66,.35);transform:translateY(-2px);}
+.ca-sec{background:var(--dark3);color:var(--white);border:1px solid var(--border);}
+.ca-sec:hover{border-color:var(--gold);color:var(--gold);}
+
+/* WEB BUILDER */
+#webbuilder{background:var(--dark2);}
+.templates-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:44px;}
+.tpl-card{background:var(--dark3);border:1px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s;}
+.tpl-card:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(0,0,0,.4);border-color:var(--accent2);}
+.tpl-preview{height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.tpl-body{padding:18px;}
+.tpl-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:5px;}
+.tpl-cat{font-size:.78rem;color:var(--gray);}
+.tpl-btn{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
+.tpl-use{background:var(--gold);color:var(--dark);padding:7px 18px;border-radius:14px;font-size:.8rem;font-weight:700;border:none;cursor:pointer;font-family:'Syne',sans-serif;}
+.tpl-edit{background:transparent;color:var(--gray);padding:7px 14px;border-radius:14px;font-size:.8rem;border:1px solid var(--border);cursor:pointer;}
+.tpl-edit:hover{color:var(--white);border-color:var(--white);}
+.scratch-box{background:var(--dark3);border:2px dashed rgba(245,197,66,.25);border-radius:18px;padding:44px;text-align:center;margin-top:22px;cursor:pointer;transition:border-color .2s;}
+.scratch-box:hover{border-color:var(--gold);}
+
+/* AI */
+#ai-section{background:var(--dark);}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px;}
+.ai-chat-box{background:var(--dark2);border:1px solid var(--border);border-radius:20px;padding:22px;display:flex;flex-direction:column;height:480px;}
+.ai-chat-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.ai-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.ai-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
+.ai-status{font-size:.75rem;color:var(--green);display:flex;align-items:center;gap:5px;}
+.ai-status::before{content:'';width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block;}
+.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px;}
+.msg{max-width:82%;padding:11px 16px;border-radius:16px;font-size:.88rem;line-height:1.55;}
+.msg.bot{background:var(--dark3);color:var(--white);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg.user{background:var(--accent);color:var(--white);align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-input-row{display:flex;gap:10px;margin-top:14px;}
+.chat-input{flex:1;background:var(--dark3);border:1px solid var(--border);border-radius:12px;padding:11px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;}
+.chat-input:focus{border-color:var(--gold);}
+.chat-send{background:var(--gold);color:var(--dark);border:none;border-radius:12px;padding:0 18px;font-size:1.1rem;cursor:pointer;}
+.ai-tools-panel{background:var(--dark2);border:1px solid var(--border);border-radius:20px;padding:22px;}
+.ai-tools-panel h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:18px;}
+.ai-tool-row{display:flex;align-items:center;gap:14px;padding:13px;background:var(--dark3);border-radius:12px;margin-bottom:10px;cursor:pointer;border:1px solid transparent;transition:border-color .2s;}
+.ai-tool-row:hover{border-color:var(--accent2);}
+.ai-tool-icon{font-size:1.4rem;flex-shrink:0;}
+.ai-tool-info{flex:1;}
+.ai-tool-name{font-weight:600;font-size:.88rem;}
+.ai-tool-desc{font-size:.78rem;color:var(--gray);margin-top:2px;}
+
+/* PLANS */
+#plans{background:var(--dark2);}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:50px;}
+.plan-card{background:var(--dark3);border:1px solid var(--border);border-radius:22px;padding:34px 28px;position:relative;transition:transform .25s,box-shadow .25s;}
+.plan-card:hover{transform:translateY(-8px);}
+.plan-card.popular{border-color:var(--gold);box-shadow:0 0 40px rgba(245,197,66,.15);}
+.plan-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--dark);padding:5px 16px;border-radius:14px;font-size:.75rem;font-weight:800;font-family:'Syne',sans-serif;white-space:nowrap;}
+.plan-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:10px;}
+.plan-price{margin-bottom:8px;}
+.plan-price .amount{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:var(--gold);}
+.plan-price .currency{font-size:1rem;color:var(--gray);margin-left:4px;}
+.plan-usd{font-size:.82rem;color:var(--gray);margin-bottom:18px;}
+.plan-features{list-style:none;margin-bottom:28px;}
+.plan-features li{display:flex;align-items:flex-start;gap:9px;font-size:.88rem;margin-bottom:10px;color:var(--gray);line-height:1.4;}
+.plan-features li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0;margin-top:1px;}
+.plan-features li.no::before{content:'✗';color:#555;}
+.plan-features li.no{opacity:.55;}
+.plan-btn{width:100%;padding:13px;border-radius:14px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;border:none;transition:all .2s;}
+.plan-btn.free{background:var(--dark2);color:var(--white);border:1px solid var(--border);}
+.plan-btn.free:hover{border-color:var(--gold);color:var(--gold);}
+.plan-btn.paid{background:var(--gold);color:var(--dark);}
+.plan-btn.paid:hover{box-shadow:0 8px 28px rgba(245,197,66,.35);}
+
+/* PAYMENT MODAL */
+.pay-modal{background:var(--dark2);border:1px solid var(--border);border-radius:22px;padding:36px 28px;width:90%;max-width:480px;position:relative;max-height:90vh;overflow-y:auto;}
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0;}
+.pay-method{background:var(--dark3);border:2px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;text-align:center;transition:all .2s;}
+.pay-method:hover,.pay-method.sel{border-color:var(--gold);background:rgba(245,197,66,.06);}
+.pm-icon{font-size:1.8rem;margin-bottom:6px;}
+.pm-name{font-size:.82rem;font-weight:600;}
+.pm-info{font-size:.72rem;color:var(--gray);margin-top:3px;}
+.pay-confirm{width:100%;padding:14px;background:var(--gold);color:var(--dark);border:none;border-radius:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:4px;}
+.pay-confirm:hover{box-shadow:0 8px 28px rgba(245,197,66,.4);}
+
+/* SUPPORT */
+#support{background:var(--dark);}
+.support-box{background:var(--dark2);border:1px solid var(--border);border-radius:22px;padding:44px;text-align:center;max-width:600px;margin:44px auto 0;}
+.support-btn{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:14px 32px;border-radius:25px;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;transition:transform .2s,box-shadow .2s;}
+.support-btn:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(37,211,102,.35);}
+
+/* FOOTER */
+footer{background:var(--dark2);border-top:1px solid var(--border);padding:40px;text-align:center;}
+.fl{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:10px;}
+
+/* NOTIF */
+.notif{position:fixed;bottom:28px;right:28px;background:var(--dark2);border:1px solid var(--gold);border-radius:14px;padding:14px 20px;font-size:.88rem;z-index:3000;opacity:0;transform:translateY(12px);transition:all .35s;max-width:280px;pointer-events:none;}
+.notif.show{opacity:1;transform:translateY(0);}
+
+/* TYPING */
+.typing{display:flex;gap:4px;padding:12px 16px;background:var(--dark3);border-radius:16px;align-self:flex-start;}
+.typing span{width:7px;height:7px;background:var(--gray);border-radius:50%;animation:tdot 1s infinite;}
+.typing span:nth-child(2){animation-delay:.15s;}
+.typing span:nth-child(3){animation-delay:.3s;}
+@keyframes tdot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+@media(max-width:800px){
+  nav{padding:14px 18px;}
+  .nav-links{display:none;}
+  section{padding:70px 20px;}
+  .comic-panel-area{grid-template-columns:repeat(2,1fr);}
+  .scene-grid{grid-template-columns:repeat(3,1fr);}
+  .ai-grid{grid-template-columns:1fr;}
+  .plans-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="logo-anim">G.L</div>
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<!-- NOTIF -->
+<div class="notif" id="notif">
+  <span id="notif-icon"></span> <span id="notif-text"></span>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h2>Bienvenue! 👋</h2>
+    <p class="sub" id="loginSubTxt">Antre non ou epi chwazi yon foto profil</p>
+    <div class="form-group">
+      <label id="nameLabelTxt">Non ou</label>
+      <input type="text" id="userNameInput" placeholder="Ex: Jean Pierre..." />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="userEmailInput" placeholder="email@example.com" />
+    </div>
+    <p style="font-size:.82rem;color:var(--gray);margin-bottom:10px;" id="chooseAvTxt">Chwazi foto profil ou:</p>
+    <div class="avatar-row" id="avatarRow"></div>
+    <button class="btn-full" onclick="doLogin()" id="enterSiteTxt">Antre sou sit la 🚀</button>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="pay-modal">
+    <button class="modal-close" onclick="closeModal('payModal')">✕</button>
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;">💳 <span id="payPlanName">Plan Ilimite</span></h2>
+    <p style="color:var(--gray);font-size:.9rem;margin-bottom:4px;" id="choosePayTxt">Chwazi metòd peman ou:</p>
+    <div style="font-size:.82rem;color:var(--gold);margin-bottom:16px;" id="payAmount">5,000 HTG / $50 USD</div>
+    <div class="pay-methods">
+      <div class="pay-method sel" id="pm1" onclick="selPay('pm1')">
+        <div class="pm-icon">📱</div>
+        <div class="pm-name">NatCash</div>
+        <div class="pm-info">43 59 53 35</div>
+      </div>
+      <div class="pay-method" id="pm2" onclick="selPay('pm2')">
+        <div class="pm-icon">🔵</div>
+        <div class="pm-name">PayPal</div>
+        <div class="pm-info">G-legacy@gmail.com</div>
+      </div>
+      <div class="pay-method" id="pm3" onclick="selPay('pm3')">
+        <div class="pm-icon">💳</div>
+        <div class="pm-name">Carte / Visa</div>
+        <div class="pm-info">G-legacy@gmail.com</div>
+      </div>
+      <div class="pay-method" id="pm4" onclick="selPay('pm4')">
+        <div class="pm-icon">💬</div>
+        <div class="pm-name">Autre</div>
+        <div class="pm-info">Kontakte nou</div>
+      </div>
+    </div>
+    <button class="pay-confirm" onclick="confirmPayment()" id="confirmPayTxt">✅ Konfime — WhatsApp</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">G.L</div>
+  <div class="nav-links">
+    <a onclick="goTo('tools')" id="navTools">Zouti</a>
+    <a onclick="goTo('comics')" id="navComics">Tikomik</a>
+    <a onclick="goTo('webbuilder')" id="navWeb">Sit Web</a>
+    <a onclick="goTo('ai-section')" id="navAI">AI</a>
+    <a onclick="goTo('plans')" id="navPlans">Plan</a>
+    <a onclick="goTo('support')" id="navSupport">Sipò</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <select class="lang-select" onchange="changeLang(this.value)" id="langSel">
+      <option value="ht">🇭🇹 Kreyòl</option>
+      <option value="fr">🇫🇷 Français</option>
+      <option value="en">🇺🇸 English</option>
+    </select>
+    <button class="nav-cta" onclick="openModal('loginModal')" id="navLoginTxt">Konekte</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge" id="heroBadgeTxt">✨ Platfòm kreyatif #1 ann Ayiti</div>
+    <h1 class="hero-title">
+      <span class="gold">G.L</span> — Kreye.<br><span class="acc">Bati.</span> Briye.
+    </h1>
+    <p class="hero-sub" id="heroSubTxt">Kreye tikomik, bati sit web, itilize AI — tout nan yon sèl platfòm pwisan. Gratis pou kòmanse.</p>
+    <div class="hero-btns">
+      <button class="btn-gold" onclick="openModal('loginModal')" id="heroStartTxt">Kòmanse Gratis 🚀</button>
+      <button class="btn-outline" onclick="goTo('plans')" id="heroPlansTxt">Wè Plan yo</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-label" id="stat1">Zouti</div></div>
+      <div class="stat"><div class="stat-num">200+</div><div class="stat-label" id="stat2">Modèl</div></div>
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label" id="stat3">Lang</div></div>
+      <div class="stat"><div class="stat-num">AI</div><div class="stat-label" id="stat4">Entegre</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="container">
+    <div class="section-tag" id="toolsTagTxt">ZOUTI GRATIS</div>
+    <h2 class="section-title" id="toolsTitleTxt">5 Zouti Gratis Pou Ou</h2>
+    <p class="section-sub" id="toolsSubTxt">Zouti pwisan — disponib gratis pou tout moun.</p>
+    <div class="tools-grid">
+      <div class="tool-card" onclick="notif('🎨 Editè foto ouvri!','success')">
+        <div class="tool-badge">GRATIS</div>
+        <div class="tool-icon">🎨</div>
+        <div class="tool-name">Editè Foto</div>
+        <div class="tool-desc">Edite foto ou menm jan ak Adobe Express. Filtè, tèks, kolaj.</div>
+      </div>
+      <div class="tool-card" onclick="notif('🖋️ Editè tèks ouvri!','success')">
+        <div class="tool-badge">GRATIS</div>
+        <div class="tool-icon">🖋️</div>
+        <div class="tool-name">Editè Tèks</div>
+        <div class="tool-desc">Ekri atik, blog, pòs sosyal ak fòma pwofesyonèl.</div>
+      </div>
+      <div class="tool-card" onclick="notif('🎥 Editè video ouvri!','success')">
+        <div class="tool-badge">GRATIS</div>
+        <div class="tool-icon">🎥</div>
+        <div class="tool-name">Editè Video</div>
+        <div class="tool-desc">Koupe, asanble epi ajoute mizik sou videyo ou yo.</div>
+      </div>
+      <div class="tool-card" onclick="notif('📊 Grafik ouvri!','success')">
+        <div class="tool-badge">GRATIS</div>
+        <div class="tool-icon">📊</div>
+        <div class="tool-name">Kreyatè Grafik</div>
+        <div class="tool-desc">Kreye grafik bèl pou prezantasyon ak rapò ou yo.</div>
+      </div>
+      <div class="tool-card" onclick="notif('🎵 Studio son ouvri!','success')">
+        <div class="tool-badge">GRATIS</div>
+        <div class="tool-icon">🎵</div>
+        <div class="tool-name">Studio Son / Vwa</div>
+        <div class="tool-desc">Anrejistre epi edite vwa ak son pou tikomik ou yo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMICS -->
+<section id="comics">
+  <div class="container">
+    <div class="section-tag">TIKOMIK</div>
+    <h2 class="section-title">Kreye Tikomik Ou 🎭</h2>
+    <p class="section-sub">Chwazi pèsonaj, scèn, ajoute vwa — kreye istwa ou reve a.</p>
+    <div class="comic-builder">
+      <div class="comic-tabs">
+        <div class="ctab active" onclick="switchTab(this)">🧑 Pèsonaj</div>
+        <div class="ctab" onclick="switchTab(this)">🌍 Scèn</div>
+        <div class="ctab" onclick="switchTab(this)">🎙️ Vwa</div>
+        <div class="ctab" onclick="switchTab(this)">🖼️ Galri</div>
+      </div>
+      <div class="comic-panel-area">
+        <div class="c-panel" onclick="addPanel(this,1)"><span class="panel-num">01</span><span style="font-size:1.8rem">➕</span><span style="font-size:.75rem;color:var(--gray)">Scèn</span></div>
+        <div class="c-panel" onclick="addPanel(this,2)"><span class="panel-num">02</span><span style="font-size:1.8rem">➕</span><span style="font-size:.75rem;color:var(--gray)">Scèn</span></div>
+        <div class="c-panel" onclick="addPanel(this,3)"><span class="panel-num">03</span><span style="font-size:1.8rem">➕</span><span style="font-size:.75rem;color:var(--gray)">Scèn</span></div>
+        <div class="c-panel" onclick="addPanel(this,4)"><span class="panel-num">04</span><span style="font-size:1.8rem">➕</span><span style="font-size:.75rem;color:var(--gray)">Scèn</span></div>
+        <div class="c-panel" onclick="addPanel(this,5)"><span class="panel-num">05</span><span style="font-size:1.8rem">➕</span><span style="font-size:.75rem;color:var(--gray)">Scèn</span></div>
+        <div class="c-panel" onclick="addPanel(this,6)"><span class="panel-num">06</span><span style="font-size:1.8rem">➕</span><span style="font-size:.75rem;color:var(--gray)">Scèn</span></div>
+      </div>
+      <p style="font-size:.85rem;color:var(--gray);margin-bottom:12px;">Chwazi yon scèn:</p>
+      <div class="scene-grid">
+        <div class="scene-item sel" onclick="selScene(this)"><div class="si">🏙️</div><div class="sl">Lavil</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">🌲</div><div class="sl">Forè</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">🏝️</div><div class="sl">Plaj</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">🏠</div><div class="sl">Kay</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">🏫</div><div class="sl">Lekòl</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">🌌</div><div class="sl">Espas</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">⛪</div><div class="sl">Legliz</div></div>
+        <div class="scene-item" onclick="selScene(this)"><div class="si">🏔️</div><div class="sl">Mòn</div></div>
+      </div>
+      <p style="font-size:.85rem;color:var(--gray);margin-bottom:10px;">Ajoute vwa:</p>
+      <div class="voice-row">
+        <button class="vbtn active" onclick="selVoice(this)">🎙️ Gason</button>
+        <button class="vbtn" onclick="selVoice(this)">🎤 Fanm</button>
+        <button class="vbtn" onclick="selVoice(this)">🤖 Robot</button>
+        <button class="vbtn" onclick="selVoice(this)">📁 Galri</button>
+      </div>
+      <div class="comic-actions">
+        <button class="ca-btn ca-primary" onclick="notif('🎭 Tikomik kap kreye...','success')">🎭 Kreye Tikomik</button>
+        <button class="ca-btn ca-sec" onclick="notif('💾 Sove!','info')">💾 Sove</button>
+        <button class="ca-btn ca-sec" onclick="notif('📤 Pataje!','info')">📤 Pataje</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEB BUILDER -->
+<section id="webbuilder">
+  <div class="container">
+    <div class="section-tag">SIT WEB</div>
+    <h2 class="section-title">Bati Sit Web Ou 🌐</h2>
+    <p class="section-sub">Chwazi nan 200+ modèl oswa kreye depi nan zewo.</p>
+    <div class="templates-grid">
+      <div class="tpl-card">
+        <div class="tpl-preview" style="background:linear-gradient(135deg,#1a1a2e,#7B5CFA);">🛍️</div>
+        <div class="tpl-body">
+          <div class="tpl-name">Boutik Online</div>
+          <div class="tpl-cat">E-commerce · Vann Pwodui</div>
+          <div class="tpl-btn">
+            <button class="tpl-use" onclick="notif('🌐 Boutik Online louvri!','success')">Itilize</button>
+            <button class="tpl-edit" onclick="notif('✏️ Editè louvri','info')">Modifye</button>
+          </div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <div class="tpl-preview" style="background:linear-gradient(135deg,#0f2027,#F5C542);">👤</div>
+        <div class="tpl-body">
+          <div class="tpl-name">Portfolio</div>
+          <div class="tpl-cat">Pèsonèl · Pwofesyonèl</div>
+          <div class="tpl-btn">
+            <button class="tpl-use" onclick="notif('🌐 Portfolio louvri!','success')">Itilize</button>
+            <button class="tpl-edit" onclick="notif('✏️ Editè louvri','info')">Modifye</button>
+          </div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <div class="tpl-preview" style="background:linear-gradient(135deg,#134e5e,#00F5A0);">🍽️</div>
+        <div class="tpl-body">
+          <div class="tpl-name">Restoran</div>
+          <div class="tpl-cat">Manje · Biznis</div>
+          <div class="tpl-btn">
+            <button class="tpl-use" onclick="notif('🌐 Restoran louvri!','success')">Itilize</button>
+            <button class="tpl-edit" onclick="notif('✏️ Editè louvri','info')">Modifye</button>
+          </div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <div class="tpl-preview" style="background:linear-gradient(135deg,#200122,#FF4D6D);">📰</div>
+        <div class="tpl-body">
+          <div class="tpl-name">Blog / Nouvèl</div>
+          <div class="tpl-cat">Kontni · Medya</div>
+          <div class="tpl-btn">
+            <button class="tpl-use" onclick="notif('🌐 Blog louvri!','success')">Itilize</button>
+            <button class="tpl-edit" onclick="notif('✏️ Editè louvri','info')">Modifye</button>
+          </div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <div class="tpl-preview" style="background:linear-gradient(135deg,#0f0c29,#302b63);">💼</div>
+        <div class="tpl-body">
+          <div class="tpl-name">Antrepriz</div>
+          <div class="tpl-cat">Kòporatif · Biznis</div>
+          <div class="tpl-btn">
+            <button class="tpl-use" onclick="notif('🌐 Antrepriz louvri!','success')">Itilize</button>
+            <button class="tpl-edit" onclick="notif('✏️ Editè louvri','info')">Modifye</button>
+          </div>
+        </div>
+      </div>
+      <div class="tpl-card">
+        <div class="tpl-preview" style="background:linear-gradient(135deg,#003973,#E5E5BE);">🎓</div>
+        <div class="tpl-body">
+          <div class="tpl-name">Lekòl / Edikasyon</div>
+          <div class="tpl-cat">Edikasyon · Fòmasyon</div>
+          <div class="tpl-btn">
+            <button class="tpl-use" onclick="notif('🌐 Edikasyon louvri!','success')">Itilize</button>
+            <button class="tpl-edit" onclick="notif('✏️ Editè louvri','info')">Modifye</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scratch-box" onclick="notif('🛠️ Editè vid louvri — kreye tout sa ou vle!','success')">
+      <div style="font-size:2.8rem;margin-bottom:14px;">🛠️</div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:1.2rem;margin-bottom:8px;">Kreye depi nan Zewo</h3>
+      <p style="color:var(--gray);font-size:.88rem;">Kòmanse ak yon espas vid — ajoute tout seksyon ou vle</p>
+    </div>
+  </div>
+</section>
+
+<!-- AI SECTION -->
+<section id="ai-section">
+  <div class="container">
+    <div class="section-tag">ENTÈLIJANS ATIFISYÈL</div>
+    <h2 class="section-title">AI Dirèk Sou Sit La 🤖</h2>
+    <p class="section-sub">Pale ak AI dirèkteman — poze kesyon, kreye kontni, jwenn èd.</p>
+    <div class="ai-grid">
+      <div class="ai-chat-box">
+        <div class="ai-chat-header">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <div class="ai-name">G.L Assistant</div>
+            <div class="ai-status">Aktif kounye a</div>
+          </div>
+        </div>
+        <div class="chat-msgs" id="chatMsgs">
+          <div class="msg bot">Bonjou! Mwen se asistan AI G.L. Kouman mwen ka ede ou jodi a? 😊</div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatIn" placeholder="Ekri mesaj ou..." onkeydown="if(event.key==='Enter')sendMsg()" />
+          <button class="chat-send" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+      <div class="ai-tools-panel">
+        <h3>🌐 Lòt AI Disponib</h3>
+        <div class="ai-tool-row" onclick="notif('🤖 ChatGPT kap louvri dirèk...','info')">
+          <div class="ai-tool-icon">🤖</div>
+          <div class="ai-tool-info">
+            <div class="ai-tool-name">ChatGPT (OpenAI)</div>
+            <div class="ai-tool-desc">Pale ak ChatGPT dirèk sou sit la</div>
+          </div>
+          <span style="color:var(--gray)">→</span>
+        </div>
+        <div class="ai-tool-row" onclick="notif('♊ Gemini kap louvri...','info')">
+          <div class="ai-tool-icon">♊</div>
+          <div class="ai-tool-info">
+            <div class="ai-tool-name">Google Gemini</div>
+            <div class="ai-tool-desc">Rechèch ak analiz pwisan</div>
+          </div>
+          <span style="color:var(--gray)">→</span>
+        </div>
+        <div class="ai-tool-row" onclick="notif('🎨 Jenèratè foto AI...','info')">
+          <div class="ai-tool-icon">🎨</div>
+          <div class="ai-tool-info">
+            <div class="ai-tool-name">AI — Kreye Foto</div>
+            <div class="ai-tool-desc">Jenere foto inèdit ak DALL-E</div>
+          </div>
+          <span style="color:var(--gray)">→</span>
+        </div>
+        <div class="ai-tool-row" onclick="notif('🎬 Jenèratè videyo AI...','info')">
+          <div class="ai-tool-icon">🎬</div>
+          <div class="ai-tool-info">
+            <div class="ai-tool-name">AI — Kreye Videyo</div>
+            <div class="ai-tool-desc">Kreye videyo otomatikman</div>
+          </div>
+          <span style="color:var(--gray)">→</span>
+        </div>
+        <div class="ai-tool-row" onclick="notif('✍️ AI Ekri kap louvri...','info')">
+          <div class="ai-tool-icon">✍️</div>
+          <div class="ai-tool-info">
+            <div class="ai-tool-name">AI — Ekri Kontni</div>
+            <div class="ai-tool-desc">Jenere atik, pòs, istwa</div>
+          </div>
+          <span style="color:var(--gray)">→</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+  <div class="container">
+    <div class="section-tag">PLAN & TARIF</div>
+    <h2 class="section-title">Chwazi Plan Ou</h2>
+    <p class="section-sub">Plan ki adapte pou tout moun — depi gratis rive ilimite.</p>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">🆓 Plan Gratis</div>
+        <div class="plan-price"><span class="amount">0</span><span class="currency">HTG</span></div>
+        <div class="plan-usd">$0 USD — Pou Toujou</div>
+        <ul class="plan-features">
+          <li>5 Zouti Gratis</li>
+          <li>3 Tikomik pa mwa</li>
+          <li>1 Sit Web Debaz</li>
+          <li>AI Asistan Debaz</li>
+          <li class="no">Aksè Ilimite</li>
+          <li class="no">Tout Modèl</li>
+        </ul>
+        <button class="plan-btn free" onclick="openModal('loginModal')">Kòmanse Gratis</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">⚡ Plan Limite</div>
+        <div class="plan-price"><span class="amount">1,500</span><span class="currency">HTG</span></div>
+        <div class="plan-usd">$20 USD / mwa</div>
+        <ul class="plan-features">
+          <li>Tout Zouti Gratis</li>
+          <li>20 Tikomik pa mwa</li>
+          <li>5 Sit Web</li>
+          <li>AI Avanse</li>
+          <li>50 Foto AI</li>
+          <li class="no">Aksè Ilimite Total</li>
+        </ul>
+        <button class="plan-btn paid" onclick="openPayModal('Plan Limite','1,500 HTG / $20 USD')">Pran Plan Sa</button>
+      </div>
+      <div class="plan-card popular">
+        <div class="plan-badge">⭐ PI POPILÈ</div>
+        <div class="plan-name">🚀 Plan Ilimite</div>
+        <div class="plan-price"><span class="amount">5,000</span><span class="currency">HTG</span></div>
+        <div class="plan-usd">$50 USD / mwa</div>
+        <ul class="plan-features">
+          <li>TOUT Zouti — Ilimite</li>
+          <li>Tikomik Ilimite</li>
+          <li>Sit Web Ilimite</li>
+          <li>Tout AI (ChatGPT, Gemini...)</li>
+          <li>Foto & Videyo AI Ilimite</li>
+          <li>Support Prioritè 24/7</li>
+        </ul>
+        <button class="plan-btn paid" onclick="openPayModal('Plan Ilimite','5,000 HTG / $50 USD')">Pran Plan Sa</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section id="support">
+  <div class="container">
+    <div class="section-tag">SUPPORT</div>
+    <h2 class="section-title">Bezwen Èd? 💬</h2>
+    <div class="support-box">
+      <div style="font-size:3rem;margin-bottom:18px;">🎧</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:10px;">Kontakte Sipò Nou an</h2>
+      <p style="color:var(--gray);margin-bottom:28px;">Ekip nou an disponib 7j/7. Klike pou vin pale avèk nou dirèkteman sou WhatsApp!</p>
+      <a href="https://wa.me/50934830635" class="support-btn" target="_blank">
+        💬 Kontakte Support — WhatsApp
+      </a>
+      <p style="margin-top:16px;font-size:.8rem;color:var(--gray);">📞 +509 34 83 0635</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fl">G.L</div>
+  <p style="color:var(--gray);font-size:.85rem;">© 2025 G.L — Platfòm Kreyatif Ayisyen. Tout dwa rezève.</p>
+  <p style="margin-top:8px;font-size:.78rem;color:var(--gray);">Kreye ak ❤️ pou Ayiti ak lemonn antye</p>
+</footer>
+
+<script>
+// ---- LOADER ----
+window.onload = function() {
+  var fill = document.getElementById('barFill');
+  if(fill) fill.style.width = '100%';
+  setTimeout(function(){
+    var loader = document.getElementById('loader');
+    if(loader){
+      loader.style.transition = 'opacity .6s';
+      loader.style.opacity = '0';
+      setTimeout(function(){ loader.style.display='none'; }, 700);
+    }
+  }, 2000);
+};
+
+// ---- NOTIFICATION ----
+var notifTimer = null;
+function notif(text, type) {
+  var n = document.getElementById('notif');
+  var icons = {success:'✅', info:'ℹ️', warn:'⚠️', error:'❌'};
+  var colors = {success:'var(--green)', info:'var(--gold)', warn:'#FFA500', error:'var(--red)'};
+  document.getElementById('notif-icon').textContent = icons[type] || 'ℹ️';
+  document.getElementById('notif-text').textContent = text;
+  n.style.borderColor = colors[type] || 'var(--gold)';
+  n.classList.add('show');
+  if(notifTimer) clearTimeout(notifTimer);
+  notifTimer = setTimeout(function(){ n.classList.remove('show'); }, 3000);
+}
+
+// ---- NAVIGATION ----
+function goTo(id) {
+  var el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+
+// ---- MODALS ----
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+document.querySelectorAll('.modal-overlay').forEach(function(m){
+  m.addEventListener('click', function(e){
+    if(e.target === m) m.classList.remove('active');
+  });
+});
+
+// ---- AVATARS ----
+var avatars = ['👦','👧','🧑','👨','👩','🧔','👴','👵','🧕','👲','🧙','🦸','🧑‍💻','👨‍🎨','👩‍🎨'];
+var colors2 = ['#7B5CFA','#F5C542','#FF4D6D','#00F5A0','#4ECDC4','#FF6B6B','#A29BFE','#FD79A8','#00B894','#E17055'];
+var selAvatar = '👦';
+(function(){
+  var row = document.getElementById('avatarRow');
+  avatars.forEach(function(em, i){
+    var d = document.createElement('div');
+    d.className = 'av-item';
+    d.style.background = colors2[i % colors2.length];
+    d.textContent = em;
+    d.onclick = function(){
+      document.querySelectorAll('.av-item').forEach(function(x){ x.classList.remove('selected'); x.style.transform=''; });
+      d.classList.add('selected');
+      selAvatar = em;
+    };
+    row.appendChild(d);
+  });
+})();
+
+function doLogin() {
+  var name = document.getElementById('userNameInput').value.trim();
+  if(!name){ notif('⚠️ Tanpri antre non ou!','warn'); return; }
+  closeModal('loginModal');
+  notif('🎉 Byenveni ' + selAvatar + ' ' + name + '!', 'success');
+}
+
+// ---- PAYMENT ----
+var selPayMethod = 'pm1';
+function selPay(id) {
+  document.querySelectorAll('.pay-method').forEach(function(x){ x.classList.remove('sel'); });
+  document.getElementById(id).classList.add('sel');
+  selPayMethod = id;
+}
+function openPayModal(planName, amount) {
+  document.getElementById('payPlanName').textContent = planName;
+  document.getElementById('payAmount').textContent = amount;
+  openModal('payModal');
+}
+function confirmPayment() {
+  var plan = document.getElementById('payPlanName').textContent;
+  var amount = document.getElementById('payAmount').textContent;
+  closeModal('payModal');
+  var msg = encodeURIComponent('Bonjou! Mwen vle peye pou ' + plan + ' — ' + amount + ' sou sit G.L la.');
+  window.open('https://wa.me/19043181164?text=' + msg, '_blank');
+}
+
+// ---- COMICS ----
+function switchTab(el) {
+  document.querySelectorAll('.ctab').forEach(function(x){ x.classList.remove('active'); });
+  el.classList.add('active');
+}
+var pScenes = ['🏙️','🌲','🏝️','🏠','🌌','🏔️'];
+function addPanel(el, n) {
+  el.innerHTML = '<span class="panel-num">0' + n + '</span><div style="font-size:2rem;">' + pScenes[n-1] + '</div>';
+  el.style.background = 'rgba(123,92,250,.1)';
+  el.style.borderColor = 'var(--accent2)';
+  notif('✅ Panel ' + n + ' ajoute!', 'success');
+}
+function selScene(el) {
+  document.querySelectorAll('.scene-item').forEach(function(x){ x.classList.remove('sel'); });
+  el.classList.add('sel');
+  notif('🌍 Scèn chwazi!', 'info');
+}
+function selVoice(el) {
+  document.querySelectorAll('.vbtn').forEach(function(x){ x.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// ---- AI CHAT ----
+var aiReplies = [
+  "Mwen ka ede ou kreye tikomik ou! Ale nan seksyon Tikomik an. 🎭",
+  "Pou bati sit web, chwazi yon modèl nan seksyon Sit Web la. 🌐",
+  "Plan Ilimite a ba ou tout aksè pou 5,000 HTG / $50 USD pa mwa. 🚀",
+  "Pou sipò, klike sou bouton Support la oswa ekri nou sou WhatsApp.",
+  "Wi! ChatGPT, Gemini ak lòt AI disponib dirèk sou G.L.",
+  "5 zouti gratis yo: Foto, Tèks, Video, Grafik, ak Studio Son.",
+  "G.L disponib an Kreyòl, Fransè, ak Anglè! 🌍",
+  "Ou ka kreye tikomik, bati sit web, jenere foto — tout gratis pou kòmanse!"
+];
+var rIdx = 0;
+function sendMsg() {
+  var inp = document.getElementById('chatIn');
+  var val = inp.value.trim();
+  if(!val) return;
+  var msgs = document.getElementById('chatMsgs');
+  var um = document.createElement('div');
+  um.className = 'msg user';
+  um.textContent = val;
+  msgs.appendChild(um);
+  inp.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  var typing = document.createElement('div');
+  typing.className = 'typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(function(){
+    typing.remove();
+    var bm = document.createElement('div');
+    bm.className = 'msg bot';
+    bm.textContent = aiReplies[rIdx % aiReplies.length];
+    rIdx++;
+    msgs.appendChild(bm);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1200);
+}
+
+// ---- LANGUAGE ----
+var T = {
+  ht:{navTools:'Zouti',navComics:'Tikomik',navWeb:'Sit Web',navAI:'AI',navPlans:'Plan',navSupport:'Sipò',navLogin:'Konekte',heroStart:'Kòmanse Gratis 🚀',heroPlans:'Wè Plan yo',stat1:'Zouti',stat2:'Modèl',stat3:'Lang',stat4:'Entegre'},
+  fr:{navTools:'Outils',navComics:'BD',navWeb:'Site Web',navAI:'IA',navPlans:'Plans',navSupport:'Support',navLogin:'Connexion',heroStart:'Commencer Gratuitement 🚀',heroPlans:'Voir les Plans',stat1:'Outils',stat2:'Modèles',stat3:'Langues',stat4:'Intégré'},
+  en:{navTools:'Tools',navComics:'Comics',navWeb:'Website',navAI:'AI',navPlans:'Plans',navSupport:'Support',navLogin:'Sign In',heroStart:'Start for Free 🚀',heroPlans:'View Plans',stat1:'Tools',stat2:'Templates',stat3:'Languages',stat4:'Integrated'}
+};
+function changeLang(lang) {
+  var t = T[lang] || T.ht;
+  var map = {navTools:'navTools',navComics:'navComics',navWeb:'navWeb',navAI:'navAI',navPlans:'navPlans',navSupport:'navSupport',navLogin:'navLoginTxt',heroStart:'heroStartTxt',heroPlans:'heroPlansTxt',stat1:'stat1',stat2:'stat2',stat3:'stat3',stat4:'stat4'};
+  for(var k in map){
+    var el = document.getElementById(map[k]);
+    if(el && t[k]) el.textContent = t[k];
+  }
+}
+</script>
+</body>
+</html>
